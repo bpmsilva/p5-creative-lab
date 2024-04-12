@@ -9,7 +9,7 @@ function setup() {
 
   // color of the sun ir orange
   let sun_color = color('#FDB813');
-  let moon_color = color('#F6F1D5');
+  let moon_color = color('#837e67');
   sun = new RoundObject(
     sun_radius,
     canvas_size/2,
@@ -55,7 +55,7 @@ function draw() {
 
   // bluish, sky look like background
   let d = overlap(sun.x, sun.y, sun.radius, moon.x, moon.y, moon.radius);
-  let c = color(135-d, 206-d, 235-d);
+  let c = color(200-d, 145-d, 35-d);
   background(c);
 
 
