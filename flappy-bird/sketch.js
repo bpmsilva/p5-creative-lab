@@ -1,50 +1,91 @@
 
+// Constants
 var UP_ARROW = 32;
 
-var y = 0;
+// "Inputs"
 var fillVal = 0;
-var canvas_size = 300;
+var canvasSize = 300;
 
-var obstacle;
+var bird; // TODO: should this be a global variable?
+var obstacles = []; // TODO: Idem
 
-function setup() {
-    createCanvas(300, 300);
-    obstacle = new Obstacle();
-}
-
-class Obstacle {
+class Bird {
     constructor() {
-        this.x = canvas_size;
-        this.width = 50;
+        // Bird starts in the middle of the canvas
+        this.x = canvasSize / 2;
+        this.y = canvasSize / 2;
 
-        this.y = 0;
-        this.gap = 100;
-        this.height = random(2*this.gap, canvas_size - 2*this.gap);
+        // Size is fixed for now
+        this.size = 50;
     }
 
     draw() {
-        rect(this.x, this.y, this.width, this.height);
-        rect(this.x, this.height + this.gap, this.width, canvas_size - this.height);
+        circle(this.x, this.y, this.size);
     }
 
     move() {
-        this.x -= 1;
+        // velocity is also fixed
+        this.y += 1;
+    }
+}
+
+class Obstacle {
+    constructor(x) {
+        this.x = x;
+        this.width = 50; // fixed
+
+        this.y = 0;
+        this.gap = 100; // fixed
+        this.height = this.computeRandomHeight();
+    }
+
+    computeRandomHeight() {
+        return random(2*this.gap, canvasSize - 2*this.gap);
+    }
+
+    draw() {
+        // Draw the top part of the obstacle
+        rect(this.x, this.y, this.width, this.height);
+        // Draw the bottom part of the obstacle
+        rect(this.x, this.height + this.gap, this.width, canvasSize - this.height);
+    }
+
+    move() {
+        this.x -= 1; // fixed velocity
+        if (this.x + this.width < 0) {
+            // Reset the obstacle
+            this.x = canvasSize + 100; // TODO: Why 100? Remove this magic number
+            this.height = this.computeRandomHeight();
+        }
+    }
+}
+
+function setup() {
+    createCanvas(canvasSize, canvasSize);
+    bird = new Bird();
+    for (var i = 0; i < 3; i++) {
+        obstacles.push(new Obstacle(canvasSize  + i*150)); // MAGIC NUMBER!!!
     }
 }
 
 
 function draw() {
-    background(fillVal);
-    circle(canvas_size / 2, canvas_size / 2 + y, 50);
-    obstacle.draw();
-    obstacle.move();
-    y += 1;
+    background(fillVal);  
+    bird.draw();
+    bird.move();
+
+    for (let i = 0; i < obstacles.length; i++) {
+        obstacles[i].draw();
+        obstacles[i].move();
+    }
+;
 }
 
 
 function keyPressed() {
+    // not to sure how it works
     if (keyCode === UP_ARROW) {
-        y -= 20;
+        bird.y -= 20;
     }
 }
 
