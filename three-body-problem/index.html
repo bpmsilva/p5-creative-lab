@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>p5.js example</title>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+      background-color: #1b1b1b;
+    }
+  </style>
+  <script src="../p5.min.js"></script>
+  <!-- <script src="../addons/p5.sound.js"></script> -->
+  <script src="sketch.js"></script>
+  <style>
+    html,
+    body {
+      height: 100%;
+      /* Ensures full viewport height */
+      margin: 0;
+      /* Removes default margin */
+      padding: 0;
+      /* Ensures no padding */
+      display: flex;
+      /* Enables flexbox */
+      justify-content: center;
+      /* Centers horizontally */
+      align-items: center;
+      /* Centers vertically */
+      overflow: hidden;
+      /* Prevents scrollbars if the canvas is too big */
+    }
+
+    main#main {
+      width: 100%;
+      /* Ensures main takes full width of the flex container */
+      display: flex;
+      /* Enables flexbox inside main */
+      justify-content: center;
+      /* Centers content horizontally inside main */
+      align-items: center;
+      /* Centers content vertically inside main */
+    }
+
+    canvas {
+      max-width: 100%;
+      /* Ensures canvas does not exceed the width of main */
+      max-height: 100%;
+      /* Ensures canvas does not exceed the height of main */
+      border: 1px solid red;
+      /* Helps visualize the canvas area */
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+  </main>
+</body>
+
+</html>
