@@ -30,9 +30,9 @@ class Body {
 
   show() {
     // draw the body as a circle
-    ellipse(this.x, this.y, this.r * 2, this.r * 2);
     fill(this.color);
-  }
+    ellipse(this.x, this.y, this.r * 2, this.r * 2);
+  }    
 }
 
 
@@ -106,16 +106,7 @@ function inelasticCollision(i, j) {
       removeElementFromArray(bodies, bodies[i]);
     }
 
-
-    bodies.push(new Body(
-      newMass,
-      newX,
-      newY,
-      vx,
-      vy,
-      avgColor
-    ));
-
+    bodies.push(new Body(newMass, newX, newY, vx, vy, avgColor));
   }
 }
 
