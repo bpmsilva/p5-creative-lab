@@ -1,7 +1,7 @@
 // This is a simple simulation of the n-body problem.
 
 // Inputs
-const circles = [];
+const bodies = [];
 const canvasSize = 800;
 const massRadiusConstant = 10; // A const that mutiplies the mass to get the radius
 const gravitationalConstant = 15; // Kind of a Kepler constant
@@ -10,8 +10,8 @@ const epsilon = 0.001; // avoid division by zero
 // masses (also the number of bodies)
 const masses = [3, 6, 9, 12];
 
-class Circle {
-  // The bodies are represented as circles
+class Body {
+
   constructor(mass, x, y, velX, velY) {
     this.mass = mass;
     this.r = massRadiusConstant * Math.pow(this.mass, 1/3);
@@ -28,29 +28,29 @@ class Circle {
   }
 
   show() {
-    // draw the circle
+    // draw the body as a circle
     ellipse(this.x, this.y, this.r * 2, this.r * 2);
   }
 }
 
 function computeGravity() {
   // F = G * m1 * m2 / r^2
-  for (let i = 0; i < circles.length; i++) {
-    for (let j = 0; j < circles.length; j++) {
+  for (let i = 0; i < bodies.length; i++) {
+    for (let j = 0; j < bodies.length; j++) {
       // There is another way to compute these gravities
-      // between the circles, but I'm not going to implement it
+      // between the bodies, but I'm not going to implement it
       // afraid of introducing bugs.
       if (i != j) {
-        let dx = circles[j].x - circles[i].x;
-        let dy = circles[j].y - circles[i].y;
-        let d = sqrt(dx*dx + dy*dy + epsilon);  // Avoid division by zero
-        // mass is equal one for now
-        let force = gravitationalConstant * circles[i].mass * circles[j].mass / (d * d);
+        let dx = bodies[j].x - bodies[i].x;
+        let dy = bodies[j].y - bodies[i].y;
+        let d = sqrt(dx*dx + dy*dy);  // Avoid division by zero
+
+        let force = gravitationalConstant * bodies[i].mass * bodies[j].mass / ((d * d) + epsilon);
         let fx = force * dx / d;
         let fy = force * dy / d;
 
-        circles[i].velX += fx / circles[i].mass;
-        circles[i].velY += fy / circles[i].mass;
+        bodies[i].velX += fx / bodies[i].mass;
+        bodies[i].velY += fy / bodies[i].mass;
       }
     }
   }
@@ -71,38 +71,38 @@ function removeElementFromArray(array, elem) {
 
 
 function inelasticCollision() {
-  // This is a simple inelastic collision between two circles
+  // This is a simple inelastic collision between two bodies
 
-  // The circles are going to collide if the distance between them
+  // The bodies are going to collide if the distance between them
   // is less then the sum of their radius.
-  for (let i = 0; i < circles.length; i++) {
-    for (let j = 0; j < circles.length; j++) {
+  for (let i = 0; i < bodies.length; i++) {
+    for (let j = 0; j < bodies.length; j++) {
       if (i != j) {
-        let dx = circles[j].x - circles[i].x;
-        let dy = circles[j].y - circles[i].y;
+        let dx = bodies[j].x - bodies[i].x;
+        let dy = bodies[j].y - bodies[i].y;
         let d = sqrt(dx*dx + dy*dy + epsilon); // Avoid division by zero
-        if (d < circles[i].r + circles[j].r) {
-          // The circles are going to collide
+        if (d < bodies[i].r + bodies[j].r) {
+          // The bodies are going to collide
 
           // the final velocity from the inelastic collision is:
-          let vx = computeFinalVelocity(circles[i].mass, circles[j].mass, circles[i].velX, circles[j].velX);
-          let vy = computeFinalVelocity(circles[i].mass, circles[j].mass, circles[i].velY, circles[j].velY);
+          let vx = computeFinalVelocity(bodies[i].mass, bodies[j].mass, bodies[i].velX, bodies[j].velX);
+          let vy = computeFinalVelocity(bodies[i].mass, bodies[j].mass, bodies[i].velY, bodies[j].velY);
 
-          // add the new circle
-          let newMass = circles[i].mass + circles[j].mass;
-          let newX = (circles[i].x + circles[j].x) / 2;
-          let newY = (circles[i].y + circles[j].y) / 2;
+          // add the new bodies
+          let newMass = bodies[i].mass + bodies[j].mass;
+          let newX = (bodies[i].x + bodies[j].x) / 2;
+          let newY = (bodies[i].y + bodies[j].y) / 2;
 
-          // remove the old circles
+          // remove the old bodies
           if (i > j) {
-            removeElementFromArray(circles, circles[i]);
-            removeElementFromArray(circles, circles[j]);
+            removeElementFromArray(bodies, bodies[i]);
+            removeElementFromArray(bodies, bodies[j]);
           } else {
-            removeElementFromArray(circles, circles[j]);
-            removeElementFromArray(circles, circles[i]);
+            removeElementFromArray(bodies, bodies[j]);
+            removeElementFromArray(bodies, bodies[i]);
           }
 
-          circles.push(new Circle(
+          bodies.push(new Body(
             newMass,
             newX,
             newY,
@@ -125,8 +125,8 @@ function setup() {
     let randomVelX = random(2) - 1;
     let randomVelY = random(2) - 1;
     console.log(masses[i]);
-    circles.push(
-      new Circle(
+    bodies.push(
+      new Body(
         masses[i],
         randomX,
         randomY,
@@ -140,8 +140,8 @@ function draw() {
   background(255);
   computeGravity();
   inelasticCollision();
-  for (let i = 0; i < circles.length; i++) {
-    circles[i].update();
-    circles[i].show();
+  for (let i = 0; i < bodies.length; i++) {
+    bodies[i].update();
+    bodies[i].show();
   }
 }
