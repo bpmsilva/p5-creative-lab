@@ -41,9 +41,6 @@ function computeDistance(x1, x2, y1, y2) {
 }
 
 
-
-
-
 function computeGravity(i, j) {
   // F = G * m1 * m2 / r^2
 
@@ -136,22 +133,26 @@ function setup() {
   }
 }
 
-function innerLoop() {
+
+function loops(naturalLaw) {
   for (let i = 0; i < bodies.length; i++) {
     for (let j = 0; j < bodies.length; j++) {
       if (i != j) {
-        computeGravity(i, j);
-        inelasticCollision(i, j);
+        naturalLaw(i, j);
       }
     }
   }
-  // computeGravity();
+}
+
+
+function applyNaturalLaws() {
+  loops(computeGravity);
+  loops(inelasticCollision);
 }
 
 function draw() {
   background(255);
-
-  innerLoop();
+  applyNaturalLaws();
   for (let i = 0; i < bodies.length; i++) {
     bodies[i].update();
     bodies[i].show();
