@@ -4,7 +4,7 @@
 const bodies = [];
 const canvasSize = 800;
 const massRadiusConstant = 10; // A const that mutiplies the mass to get the radius
-const gravitationalConstant = 15; // Kind of a Kepler constant
+const gravitationalConstant = 100; // Kind of a Kepler constant
 const epsilon = 0.001; // avoid division by zero
 
 // masses (also the number of bodies)
@@ -14,7 +14,7 @@ class Body {
 
   constructor(mass, x, y, velX, velY) {
     this.mass = mass;
-    this.r = massRadiusConstant * Math.pow(this.mass, 1/3);
+    this.r = massRadiusConstant * Math.pow(this.mass, 1 / 3);
     this.x = x;
     this.y = y;
     this.velX = velX;
@@ -33,31 +33,38 @@ class Body {
   }
 }
 
-function computeGravity() {
+
+function computeDistance(x1, x2, y1, y2) {
+  let dx = x1 - x2;
+  let dy = y1 - y2;
+  return sqrt(dx * dx + dy * dy);
+}
+
+
+
+
+
+function computeGravity(i, j) {
   // F = G * m1 * m2 / r^2
-  for (let i = 0; i < bodies.length; i++) {
-    for (let j = 0; j < bodies.length; j++) {
-      // There is another way to compute these gravities
-      // between the bodies, but I'm not going to implement it
-      // afraid of introducing bugs.
-      if (i != j) {
-        let dx = bodies[j].x - bodies[i].x;
-        let dy = bodies[j].y - bodies[i].y;
-        let d = sqrt(dx*dx + dy*dy);  // Avoid division by zero
 
-        let force = gravitationalConstant * bodies[i].mass * bodies[j].mass / ((d * d) + epsilon);
-        let fx = force * dx / d;
-        let fy = force * dy / d;
+  // distances
+  let dx = bodies[j].x - bodies[i].x;
+  let dy = bodies[j].y - bodies[i].y;
+  let d = sqrt(dx * dx + dy * dy);  // Avoid division by zero
 
-        bodies[i].velX += fx / bodies[i].mass;
-        bodies[i].velY += fy / bodies[i].mass;
-      }
-    }
-  }
+  // forces
+  let force = gravitationalConstant * bodies[i].mass * bodies[j].mass / ((d * d) + epsilon);
+  let fx = force * dx / d;
+  let fy = force * dy / d;
+
+  // update velocities
+  bodies[i].velX += fx / bodies[i].mass;
+  bodies[i].velY += fy / bodies[i].mass;
 }
 
 
 function computeFinalVelocity(mass1, mass2, vel1, vel2) {
+  // This is a simple inelastic collision between two bodies
   return (mass1 * vel1 + mass2 * vel2) / (mass1 + mass2);
 }
 
@@ -70,50 +77,43 @@ function removeElementFromArray(array, elem) {
 }
 
 
-function inelasticCollision() {
+function inelasticCollision(i, j) {
   // This is a simple inelastic collision between two bodies
 
   // The bodies are going to collide if the distance between them
-  // is less then the sum of their radius.
-  for (let i = 0; i < bodies.length; i++) {
-    for (let j = 0; j < bodies.length; j++) {
-      if (i != j) {
-        let dx = bodies[j].x - bodies[i].x;
-        let dy = bodies[j].y - bodies[i].y;
-        let d = sqrt(dx*dx + dy*dy + epsilon); // Avoid division by zero
-        if (d < bodies[i].r + bodies[j].r) {
-          // The bodies are going to collide
+  // is less then the sum of their radius
+  let d = computeDistance(bodies[i].x, bodies[j].x, bodies[i].y, bodies[j].y);
+  if (d < bodies[i].r + bodies[j].r) {
+    // The bodies collided
 
-          // the final velocity from the inelastic collision is:
-          let vx = computeFinalVelocity(bodies[i].mass, bodies[j].mass, bodies[i].velX, bodies[j].velX);
-          let vy = computeFinalVelocity(bodies[i].mass, bodies[j].mass, bodies[i].velY, bodies[j].velY);
+    // the final velocity from the inelastic collision is:
+    let vx = computeFinalVelocity(bodies[i].mass, bodies[j].mass, bodies[i].velX, bodies[j].velX);
+    let vy = computeFinalVelocity(bodies[i].mass, bodies[j].mass, bodies[i].velY, bodies[j].velY);
 
-          // add the new bodies
-          let newMass = bodies[i].mass + bodies[j].mass;
-          let newX = (bodies[i].x + bodies[j].x) / 2;
-          let newY = (bodies[i].y + bodies[j].y) / 2;
+    // add the new bodies
+    let newMass = bodies[i].mass + bodies[j].mass;
+    let newX = (bodies[i].x + bodies[j].x) / 2;
+    let newY = (bodies[i].y + bodies[j].y) / 2;
 
-          // remove the old bodies
-          if (i > j) {
-            removeElementFromArray(bodies, bodies[i]);
-            removeElementFromArray(bodies, bodies[j]);
-          } else {
-            removeElementFromArray(bodies, bodies[j]);
-            removeElementFromArray(bodies, bodies[i]);
-          }
-
-          bodies.push(new Body(
-            newMass,
-            newX,
-            newY,
-            vx,
-            vy
-          ));
-        }
-      }
+    // remove the old bodies
+    if (i > j) {
+      removeElementFromArray(bodies, bodies[i]);
+      removeElementFromArray(bodies, bodies[j]);
+    } else {
+      removeElementFromArray(bodies, bodies[j]);
+      removeElementFromArray(bodies, bodies[i]);
     }
-  } 
+
+    bodies.push(new Body(
+      newMass,
+      newX,
+      newY,
+      vx,
+      vy
+    ));
+  }
 }
+
 
 function setup() {
   createCanvas(canvasSize, canvasSize);
@@ -136,10 +136,22 @@ function setup() {
   }
 }
 
+function innerLoop() {
+  for (let i = 0; i < bodies.length; i++) {
+    for (let j = 0; j < bodies.length; j++) {
+      if (i != j) {
+        computeGravity(i, j);
+        inelasticCollision(i, j);
+      }
+    }
+  }
+  // computeGravity();
+}
+
 function draw() {
   background(255);
-  computeGravity();
-  inelasticCollision();
+
+  innerLoop();
   for (let i = 0; i < bodies.length; i++) {
     bodies[i].update();
     bodies[i].show();
