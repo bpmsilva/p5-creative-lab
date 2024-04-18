@@ -4,11 +4,12 @@
 const bodies = [];
 const canvasSize = 800;
 const massRadiusConstant = 10; // A const that mutiplies the mass to get the radius
-const gravitationalConstant = 100; // Kind of a Kepler constant
+const gravitationalConstant = 20; // Kind of a Kepler constant
 const epsilon = 0.001; // avoid division by zero
 
 // masses (also the number of bodies)
-const masses = [3, 6, 9, 12];
+const numMasses = 10;
+const masses = [];
 
 class Body {
 
@@ -123,6 +124,10 @@ function averageColors(color1, color2) {
 function setup() {
   createCanvas(canvasSize, canvasSize);
   background(0);
+
+  for (let i = 0; i < numMasses; i++) {
+    masses.push(random(1,10));
+  }
 
   for (let i = 0; i < masses.length; i++) {
     let randomX = random(canvasSize);
