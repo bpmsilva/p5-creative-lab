@@ -129,7 +129,7 @@ function setup() {
     masses.push(random(1,10));
   }
 
-  for (let i = 0; i < masses.length; i++) {
+  for (let mass of masses) {
     let randomX = random(canvasSize);
     let randomY = random(canvasSize);
     let randomVelX = random(2) - 1;
@@ -138,7 +138,7 @@ function setup() {
     // console.log(masses[i]);
     bodies.push(
       new Body(
-        masses[i],
+        mass,
         randomX,
         randomY,
         randomVelX,
@@ -169,8 +169,8 @@ function applyNaturalLaws() {
 function draw() {
   background(0, 10);
   applyNaturalLaws();
-  for (let i = 0; i < bodies.length; i++) {
-    bodies[i].update();
-    bodies[i].show();
+  for (let body of bodies) {
+    body.update();
+    body.show();
   }
 }
