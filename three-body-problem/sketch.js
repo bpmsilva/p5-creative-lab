@@ -31,6 +31,7 @@ class Body {
   show() {
     // draw the body as a circle
     fill(this.color);
+    stroke(this.color);
     ellipse(this.x, this.y, this.r * 2, this.r * 2);
   }    
 }
@@ -161,7 +162,7 @@ function applyNaturalLaws() {
 
 
 function draw() {
-  background(0);
+  background(0, 10);
   applyNaturalLaws();
   for (let i = 0; i < bodies.length; i++) {
     bodies[i].update();
