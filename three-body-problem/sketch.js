@@ -114,9 +114,9 @@ function inelasticCollision(i, j) {
 
 
 function averageColors(color1, color2) {
-  r = color1.levels[0] + color2.levels[0] / 2;
-  g = color1.levels[1] + color2.levels[1] / 2;
-  b = color1.levels[2] + color2.levels[2] / 2;
+  r = (color1.levels[0] + color2.levels[0]) / 2;
+  g = (color1.levels[1] + color2.levels[1]) / 2;
+  b = (color1.levels[2] + color2.levels[2]) / 2;
   return color(r, g, b);
 }
 
