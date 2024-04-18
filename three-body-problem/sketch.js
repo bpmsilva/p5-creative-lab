@@ -12,13 +12,14 @@ const masses = [3, 6, 9, 12];
 
 class Body {
 
-  constructor(mass, x, y, velX, velY) {
+  constructor(mass, x, y, velX, velY, color) {
     this.mass = mass;
     this.r = massRadiusConstant * Math.pow(this.mass, 1 / 3);
     this.x = x;
     this.y = y;
     this.velX = velX;
     this.velY = velY;
+    this.color = color;
   }
 
   update() {
@@ -30,6 +31,7 @@ class Body {
   show() {
     // draw the body as a circle
     ellipse(this.x, this.y, this.r * 2, this.r * 2);
+    fill(this.color);
   }
 }
 
@@ -92,6 +94,9 @@ function inelasticCollision(i, j) {
     let newX = (bodies[i].x + bodies[j].x) / 2;
     let newY = (bodies[i].y + bodies[j].y) / 2;
 
+    // average the colors to later use in the new body
+    avgColor = averageColors(bodies[i].color, bodies[j].color);
+
     // remove the old bodies
     if (i > j) {
       removeElementFromArray(bodies, bodies[i]);
@@ -101,34 +106,47 @@ function inelasticCollision(i, j) {
       removeElementFromArray(bodies, bodies[i]);
     }
 
+
     bodies.push(new Body(
       newMass,
       newX,
       newY,
       vx,
-      vy
+      vy,
+      avgColor
     ));
+
   }
+}
+
+
+function averageColors(color1, color2) {
+  r = color1.levels[0] + color2.levels[0] / 2;
+  g = color1.levels[1] + color2.levels[1] / 2;
+  b = color1.levels[2] + color2.levels[2] / 2;
+  return color(r, g, b);
 }
 
 
 function setup() {
   createCanvas(canvasSize, canvasSize);
-  background(255);
+  background(0);
 
   for (let i = 0; i < masses.length; i++) {
     let randomX = random(canvasSize);
     let randomY = random(canvasSize);
     let randomVelX = random(2) - 1;
     let randomVelY = random(2) - 1;
-    console.log(masses[i]);
+    let randomColor = color(random(255), random(255), random(255));
+    // console.log(masses[i]);
     bodies.push(
       new Body(
         masses[i],
         randomX,
         randomY,
         randomVelX,
-        randomVelY
+        randomVelY,
+        randomColor
       ));
   }
 }
@@ -150,8 +168,9 @@ function applyNaturalLaws() {
   loops(inelasticCollision);
 }
 
+
 function draw() {
-  background(255);
+  background(0);
   applyNaturalLaws();
   for (let i = 0; i < bodies.length; i++) {
     bodies[i].update();
