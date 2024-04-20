@@ -1,15 +1,17 @@
 // This is a simple simulation of the n-body problem.
 
 // Inputs
+const solarSystem = false;
 const bodies = [];
 const canvasSize = 800;
-const massRadiusConstant = 10; // A const that mutiplies the mass to get the radius
-const gravitationalConstant = 20; // Kind of a Kepler constant
 const epsilon = 0.001; // avoid division by zero
 
 // masses (also the number of bodies)
 const numMasses = 10;
 const masses = [];
+
+var massRadiusConstant; // A const that mutiplies the mass to get the radius
+var gravitationalConstant; // a virtual gravitational constant
 
 class Body {
 
@@ -34,7 +36,7 @@ class Body {
     fill(this.color);
     stroke(this.color);
     ellipse(this.x, this.y, this.r * 2, this.r * 2);
-  }    
+  }
 }
 
 
@@ -114,9 +116,9 @@ function inelasticCollision(i, j) {
 
 
 function averageColors(color1, color2) {
-  r = (color1.levels[0] + color2.levels[0]) / 2;
-  g = (color1.levels[1] + color2.levels[1]) / 2;
-  b = (color1.levels[2] + color2.levels[2]) / 2;
+  let r = (color1.levels[0] + color2.levels[0]) / 2;
+  let g = (color1.levels[1] + color2.levels[1]) / 2;
+  let b = (color1.levels[2] + color2.levels[2]) / 2;
   return color(r, g, b);
 }
 
@@ -125,26 +127,56 @@ function setup() {
   createCanvas(canvasSize, canvasSize);
   background(0);
 
-  for (let i = 0; i < numMasses; i++) {
-    masses.push(random(1,10));
-  }
+  if (solarSystem) {
+    massRadiusConstant = 1;
+    gravitationalConstant = 1;
 
-  for (let mass of masses) {
-    let randomX = random(canvasSize);
-    let randomY = random(canvasSize);
-    let randomVelX = random(2) - 1;
-    let randomVelY = random(2) - 1;
-    let randomColor = color(random(255), random(255), random(255));
-    // console.log(masses[i]);
     bodies.push(
       new Body(
-        mass,
-        randomX,
-        randomY,
-        randomVelX,
-        randomVelY,
-        randomColor
+        100,
+        canvasSize / 2 + 100,
+        canvasSize / 2,
+        0,
+        Math.sqrt(300),
+        color(0, 0, 255)
       ));
+
+    // massive body (like the sun)
+    bodies.push(
+      new Body(
+        30000,
+        canvasSize / 2,
+        canvasSize / 2,
+        0,
+        0,
+        c = color(255, 255, 0)
+      ));
+
+  } else {
+    massRadiusConstant = 10; // A const that mutiplies the mass to get the radius
+    gravitationalConstant = 20;
+
+    for (let i = 0; i < numMasses; i++) {
+      masses.push(random(1, 10));
+    }
+
+    for (let mass of masses) {
+      let randomX = random(canvasSize);
+      let randomY = random(canvasSize);
+      let randomVelX = random(2) - 1;
+      let randomVelY = random(2) - 1;
+      let randomColor = color(random(255), random(255), random(255));
+      // console.log(masses[i]);
+      bodies.push(
+        new Body(
+          mass,
+          randomX,
+          randomY,
+          randomVelX,
+          randomVelY,
+          randomColor
+        ));
+    }
   }
 }
 
