@@ -17,9 +17,12 @@ class Bird {
 
         // Size is fixed for now
         this.size = 50;
+        this.color = color('white');
     }
 
     draw() {
+        // fill color:
+        fill(this.color);
         circle(this.x, this.y, this.size);
     }
 
@@ -32,9 +35,8 @@ class Bird {
 class Obstacle {
     constructor(x) {
         this.x = x;
-        this.width = 50; // fixed
+        this.width = 10; // fixed
 
-        this.y = 0;
         this.gap = 100; // fixed
         this.height = this.computeRandomHeight();
     }
@@ -45,7 +47,7 @@ class Obstacle {
 
     draw() {
         // Draw the top part of the obstacle
-        rect(this.x, this.y, this.width, this.height);
+        rect(this.x, 0, this.width, this.height);
         // Draw the bottom part of the obstacle
         rect(this.x, this.height + this.gap, this.width, canvasSize - this.height);
     }
@@ -78,7 +80,18 @@ function draw() {
         obstacles[i].draw();
         obstacles[i].move();
     }
-;
+    DetectCollision(bird, obstacles);
+}
+
+function DetectCollision(bird, obstacles) {
+    for (let i = 0; i < obstacles.length; i++) {
+        if (bird.x + bird.size/2 > obstacles[i].x && bird.x < obstacles[i].x + obstacles[i].width + bird.size/2) {
+            if (bird.y - bird.size/2 < obstacles[i].height || bird.y + bird.size/2 > obstacles[i].height + obstacles[i].gap) {
+                bird.color = color('red');
+            }
+        }
+    }
+    return false;
 }
 
 
