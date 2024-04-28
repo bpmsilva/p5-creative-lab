@@ -1,3 +1,34 @@
+# p5 Creative Lab
+
+This is a personal project in which I explore the [p5.js](https://p5js.org/) library to create simulations, animations, and interactive “art” (if I may call my work that). The project is heavily inspired by [Daniel Shiffman](https://twitter.com/shiffman), who posts most of his designs on his YouTube channel, [The Coding Train](https://www.youtube.com/@TheCodingTrain).
+
+
+## Implemented Ideas
+
+These are some of the ideas I have already "implemented" (they may not be fully functional or complete):
+
+- [x] Eclipse
+- [x] Flappy Bird
+- [x] Particles
+- [x] Purple Rain (as in [The Coding Train](https://www.youtube.com/watch?v=KkyIDI6rQJI))
+- [x] Riemann Hypothesis (I like to call it The Thin Red Line).
+- [x] Three Body Problem
+
+# Upcoming Ideas
+
+These are some of the ideas I may implment or not:
+
+- [ ] Brownian Motion
+- [ ] Double/Triple Pendulum
+- [ ] Fireworks
+- [ ] Fractal Trees
+- [ ] Maze Generator
+- [ ] Space Invaders
+- [ ] The Game of Life
+- [ ] The Lorenz Attractor
+- [ ] The Ulam Spiral
+- [ ] Vector Field
+
 # Welcome to p5.js
 
 You have downloaded the complete p5.js library ZIP file, yay!
