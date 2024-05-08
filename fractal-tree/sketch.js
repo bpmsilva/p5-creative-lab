@@ -7,7 +7,7 @@ const y0 = canvasSize;
 const y1 = y0 - firstBranchLength;
 
 const maxEndBranches = 2048;
-const fractalRatio = 2/3;
+const fractalRatio = 0.5;
 const fractalAngle = Math.PI / 4;
 
 class Branch {
@@ -17,7 +17,7 @@ class Branch {
     this.end = end;
   }
 
-  compute_angle() {
+  computeAngle() {
     // What is the difference between atan and atan2?
     // Answer (Copilot): atan2 is a function that returns the arctangent of the quotient of its arguments.
     // It is similar to atan, but atan2 returns the angle in the correct quadrant.
@@ -27,7 +27,7 @@ class Branch {
     );
   }
 
-  compute_size() {
+  computeSize() {
     // Where is distance defined? In the p5.js library?
     return dist(this.start.x, this.start.y, this.end.x, this.end.y);
   }
@@ -40,7 +40,7 @@ class Branch {
 }
 
 // recursive function to draw branches
-function drawBranches(branchArr) {
+function drawBranches(branchArr, ratio) {
 
   if (branchArr.length > maxEndBranches) {
     return;
@@ -49,8 +49,8 @@ function drawBranches(branchArr) {
   let newBranches = [];
   for (let i = 0; i < branchArr.length; i++) {
     let branch = branchArr[i];
-    let angle = branch.compute_angle();
-    let size = branch.compute_size();
+    let angle = branch.computeAngle();
+    let size = branch.computeSize();
 
     let newBranch1 = new Branch(
       // Branch starts at the end of the previous branch
@@ -59,8 +59,8 @@ function drawBranches(branchArr) {
         // New branch ends at a give ratio and angle from the previous branch
         // 2/3 is the ratio and Math.PI / 4 is the angle that need to be remove
         // as they are magic numbers. The ideia here is to make sliders to control them
-        x: branch.end.x + fractalRatio * size * Math.cos(angle + fractalAngle),
-        y: branch.end.y + fractalRatio * size * Math.sin(angle + fractalAngle)
+        x: branch.end.x + ratio * size * Math.cos(angle + fractalAngle),
+        y: branch.end.y + ratio * size * Math.sin(angle + fractalAngle)
       }
     );
 
@@ -69,8 +69,8 @@ function drawBranches(branchArr) {
       // but the angle is different
       {x: branch.end.x, y: branch.end.y},
       {
-        x: branch.end.x + fractalRatio * size * Math.cos(angle - fractalAngle),
-        y: branch.end.y + fractalRatio * size * Math.sin(angle - fractalAngle)
+        x: branch.end.x + ratio * size * Math.cos(angle - fractalAngle),
+        y: branch.end.y + ratio * size * Math.sin(angle - fractalAngle)
       }
     );
 
@@ -82,7 +82,7 @@ function drawBranches(branchArr) {
     newBranches.push(newBranch2);
   }
 
-  drawBranches(newBranches);
+  drawBranches(newBranches, ratio);
 }
 
 function setup() {
@@ -92,10 +92,23 @@ function setup() {
   stroke(0);
   strokeWeight(2);
 
-  // draw first branch
-  let firstBranch = new Branch({x: x0, y: y0}, {x: x1, y: y1});
-  firstBranch.show();
+  ratioSlider = createSlider(0, 1, fractalRatio, 0.01);  
+}
 
-  // draw next branches
-  drawBranches([firstBranch]);
+function draw() {
+  let oldFractalRatio = 0;
+  let fractalRatio = ratioSlider.value()
+
+  // draw first branch
+  if (fractalRatio != oldFractalRatio) {
+    background(255);
+
+    let firstBranch = new Branch({x: x0, y: y0}, {x: x1, y: y1});
+    firstBranch.show();
+
+    // draw next branches
+    drawBranches([firstBranch], fractalRatio);
+  }
+
+  oldFractalRatio = fractalRatio;
 }
