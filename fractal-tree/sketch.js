@@ -7,8 +7,16 @@ const y0 = canvasSize;
 const y1 = y0 - firstBranchLength;
 
 const maxEndBranches = 2048;
-const fractalRatio = 0.5;
+const initialFractalRatio = 0.5;
 const fractalAngle = Math.PI / 4;
+
+let ratioSlider1, ratioSlider2;
+
+let oldFractalRatio1 = 0;
+let fractalRatio1 = initialFractalRatio;
+let fractalRatio2 = initialFractalRatio;
+
+
 
 class Branch {
   constructor(start, end) {
@@ -40,7 +48,7 @@ class Branch {
 }
 
 // recursive function to draw branches
-function drawBranches(branchArr, ratio) {
+function drawBranches(branchArr, fractalRatio1, fractalRatio2) {
 
   if (branchArr.length > maxEndBranches) {
     return;
@@ -59,8 +67,8 @@ function drawBranches(branchArr, ratio) {
         // New branch ends at a give ratio and angle from the previous branch
         // 2/3 is the ratio and Math.PI / 4 is the angle that need to be remove
         // as they are magic numbers. The ideia here is to make sliders to control them
-        x: branch.end.x + ratio * size * Math.cos(angle + fractalAngle),
-        y: branch.end.y + ratio * size * Math.sin(angle + fractalAngle)
+        x: branch.end.x + fractalRatio1 * size * Math.cos(angle + fractalAngle),
+        y: branch.end.y + fractalRatio1 * size * Math.sin(angle + fractalAngle)
       }
     );
 
@@ -69,8 +77,8 @@ function drawBranches(branchArr, ratio) {
       // but the angle is different
       {x: branch.end.x, y: branch.end.y},
       {
-        x: branch.end.x + ratio * size * Math.cos(angle - fractalAngle),
-        y: branch.end.y + ratio * size * Math.sin(angle - fractalAngle)
+        x: branch.end.x + fractalRatio2 * size * Math.cos(angle - fractalAngle),
+        y: branch.end.y + fractalRatio2 * size * Math.sin(angle - fractalAngle)
       }
     );
 
@@ -82,7 +90,7 @@ function drawBranches(branchArr, ratio) {
     newBranches.push(newBranch2);
   }
 
-  drawBranches(newBranches, ratio);
+  drawBranches(newBranches, fractalRatio1, fractalRatio2);
 }
 
 function setup() {
@@ -92,23 +100,27 @@ function setup() {
   stroke(0);
   strokeWeight(2);
 
-  ratioSlider = createSlider(0, 1, fractalRatio, 0.01);  
+  ratioSlider1 = createSlider(0, 1, initialFractalRatio, 0.01);
+  ratioSlider2 = createSlider(0, 1, initialFractalRatio, 0.01);  
 }
 
 function draw() {
-  let oldFractalRatio = 0;
-  let fractalRatio = ratioSlider.value()
+
+  fractalRatio1 = ratioSlider1.value();   
+  fractalRatio2 = ratioSlider2.value();
 
   // draw first branch
-  if (fractalRatio != oldFractalRatio) {
+  if (fractalRatio1 != oldFractalRatio1||
+      fractalRatio2 != oldFractalRatio2) {
     background(255);
 
     let firstBranch = new Branch({x: x0, y: y0}, {x: x1, y: y1});
     firstBranch.show();
 
     // draw next branches
-    drawBranches([firstBranch], fractalRatio);
-  }
+    drawBranches([firstBranch], fractalRatio1, fractalRatio2);
 
-  oldFractalRatio = fractalRatio;
+    oldFractalRatio1 = fractalRatio1;
+    oldFractalRatio2 = fractalRatio2;
+  }
 }
