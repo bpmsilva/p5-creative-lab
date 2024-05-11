@@ -8,12 +8,14 @@ const x1 = x0;
 const y0 = canvasSize;
 const y1 = y0 - firstBranchLength;
 
+let strokeValue = 2;
 const maxEndBranches = 2048;
 const initialFractalRatio = 0.5;
 const initialFractalAngle = Math.PI / 4;
 
-let translationX = 0;
-let translationY = 0;
+let scaleFactor = 1
+let translationX = canvasSize/2;
+let translationY = canvasSize/2;
 
 // variables for the size ratio sliders
 let ratioSlider1, ratioSlider2;
@@ -109,7 +111,7 @@ function setup() {
   background(255);
 
   stroke(0);
-  strokeWeight(2);
+  strokeWeight(strokeValue);
 
   ratioSlider1 = createSlider(0, 1, initialFractalRatio, 0.01);
   ratioSlider2 = createSlider(0, 1, initialFractalRatio, 0.01);
@@ -132,8 +134,23 @@ onmousedown = function() {
   }
 }
 
+function mouseWheel(event) {
+  if (event.deltaY > 0) {
+    scaleFactor *= 0.9;
+    strokeValue *= 1.1;
+  } else {
+    scaleFactor *= 1.1;
+    strokeValue *= 0.9;
+  }
+  return false;
+}
+
 function draw() {
+  strokeWeight(strokeValue);
+
+  // translate considering the scale factor
   translate(translationX - canvasSize/2, translationY - canvasSize/2);
+  scale(scaleFactor);
 
   fractalRatio1 = ratioSlider1.value();
   fractalRatio2 = ratioSlider2.value();
@@ -147,7 +164,8 @@ function draw() {
     fractalAngle1 != oldFractalAngle1 ||
     fractalAngle2 != oldFractalAngle2 ||
     translationX != oldTranslationX ||
-    translationY != oldTranslationY
+    translationY != oldTranslationY ||
+    scaleFactor != oldScaleFactor
   ) {
     background(255);
 
@@ -165,6 +183,9 @@ function draw() {
 
     oldTranslationX = translationX;
     oldTranslationY = translationY;
+
+    oldScaleFactor = scaleFactor;
   }
-  translate(-translationX, -translationY);
+
+  resetMatrix();
 }
