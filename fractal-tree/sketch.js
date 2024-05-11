@@ -14,8 +14,10 @@ const initialFractalRatio = 0.5;
 const initialFractalAngle = Math.PI / 4;
 
 let scaleFactor = 1
-let translationX = canvasSize/2;
-let translationY = canvasSize/2;
+let translateZoomX = 0;
+let translateZoomY = 0;
+let translationX = 0;
+let translationY = 0;
 
 // variables for the size ratio sliders
 let ratioSlider1, ratioSlider2;
@@ -120,27 +122,39 @@ function setup() {
   angleSlider2 = createSlider(0, Math.PI / 2, initialFractalAngle, 0.01);
 }
 
-onmousedown = function() {
+onmousedown = function () {
 
   // start pan effect
-  this.onmousemove = function(e) {
+  this.onmousemove = function (e) {
     translationX += e.movementX;
     translationY += e.movementY;
   }
 
   // stop pan effect
-  this.onmouseup = function() {
+  this.onmouseup = function () {
     this.onmousemove = null;
   }
 }
 
+// draw a tiny red circle at the mouse position,
+// considering the pan and scale factor
+function mouseDragged() {
+  fill(255, 0, 0);
+  ellipse(
+    (mouseX - translationX),
+    (mouseY - translationY),
+    5,
+    5
+  );
+}
+
 function mouseWheel(event) {
   if (event.deltaY > 0) {
-    scaleFactor *= 0.9;
+    scaleFactor /= 1.1;
     strokeValue *= 1.1;
   } else {
     scaleFactor *= 1.1;
-    strokeValue *= 0.9;
+    strokeValue /= 1.1;
   }
   return false;
 }
@@ -149,14 +163,17 @@ function draw() {
   strokeWeight(strokeValue);
 
   // translate considering the scale factor
-  translate(translationX - canvasSize/2, translationY - canvasSize/2);
   scale(scaleFactor);
+  // translate(translationX, translationY);
+  translate(translateZoomX, translateZoomY);
 
   fractalRatio1 = ratioSlider1.value();
   fractalRatio2 = ratioSlider2.value();
 
   fractalAngle1 = angleSlider1.value();
   fractalAngle2 = angleSlider2.value();
+
+  mouseDragged();
 
   // draw first branch
   if (fractalRatio1 != oldFractalRatio1 ||
@@ -187,5 +204,4 @@ function draw() {
     oldScaleFactor = scaleFactor;
   }
 
-  resetMatrix();
 }
