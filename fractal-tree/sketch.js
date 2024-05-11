@@ -12,6 +12,9 @@ const maxEndBranches = 2048;
 const initialFractalRatio = 0.5;
 const initialFractalAngle = Math.PI / 4;
 
+let translationX = 0;
+let translationY = 0;
+
 // variables for the size ratio sliders
 let ratioSlider1, ratioSlider2;
 let oldFractalRatio1 = 0;
@@ -115,7 +118,22 @@ function setup() {
   angleSlider2 = createSlider(0, Math.PI / 2, initialFractalAngle, 0.01);
 }
 
+onmousedown = function() {
+
+  // start pan effect
+  this.onmousemove = function(e) {
+    translationX += e.movementX;
+    translationY += e.movementY;
+  }
+
+  // stop pan effect
+  this.onmouseup = function() {
+    this.onmousemove = null;
+  }
+}
+
 function draw() {
+  translate(translationX - canvasSize/2, translationY - canvasSize/2);
 
   fractalRatio1 = ratioSlider1.value();
   fractalRatio2 = ratioSlider2.value();
@@ -127,7 +145,9 @@ function draw() {
   if (fractalRatio1 != oldFractalRatio1 ||
     fractalRatio2 != oldFractalRatio2 ||
     fractalAngle1 != oldFractalAngle1 ||
-    fractalAngle2 != oldFractalAngle2
+    fractalAngle2 != oldFractalAngle2 ||
+    translationX != oldTranslationX ||
+    translationY != oldTranslationY
   ) {
     background(255);
 
@@ -142,5 +162,9 @@ function draw() {
 
     oldFractalAngle1 = fractalAngle1;
     oldFractalAngle2 = fractalAngle2;
+
+    oldTranslationX = translationX;
+    oldTranslationY = translationY;
   }
+  translate(-translationX, -translationY);
 }
