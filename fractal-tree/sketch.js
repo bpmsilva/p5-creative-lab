@@ -146,6 +146,7 @@ function mouseDragged() {
     5,
     5
   );
+  console.log(mouseX, mouseY);
 }
 
 function mouseWheel(event) {
@@ -159,13 +160,27 @@ function mouseWheel(event) {
   return false;
 }
 
+function zoom() {
+  // zoom in center of canvas
+  translateZoomX = (width - width * scaleFactor) / 2; // center the canvas horizontally
+  translateZoomY = (height - height * scaleFactor) / 2; // center the canvas vertically
+
+  // zoom in center of mouse position
+  let X = (mouseX - translationX) * (1 - scaleFactor);
+  let Y = (mouseY - translationY) * (1 - scaleFactor);
+
+  console.log(translateZoomX, translateZoomY, X, Y);
+
+  translate(X, Y);
+  scale(scaleFactor);
+}
+
 function draw() {
   strokeWeight(strokeValue);
 
   // translate considering the scale factor
-  scale(scaleFactor);
-  // translate(translationX, translationY);
-  translate(translateZoomX, translateZoomY);
+  zoom();
+  translate(translationX, translationY);
 
   fractalRatio1 = ratioSlider1.value();
   fractalRatio2 = ratioSlider2.value();
@@ -203,5 +218,8 @@ function draw() {
 
     oldScaleFactor = scaleFactor;
   }
+
+  // reset all translation and scale values
+  resetMatrix();
 
 }
