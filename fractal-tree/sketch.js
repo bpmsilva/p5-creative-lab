@@ -14,8 +14,6 @@ const initialFractalRatio = 0.5;
 const initialFractalAngle = Math.PI / 4;
 
 let scaleFactor = 1
-let translateZoomX = 0;
-let translateZoomY = 0;
 let translationX = 0;
 let translationY = 0;
 
@@ -146,7 +144,7 @@ function mouseDragged() {
     5,
     5
   );
-  console.log(mouseX, mouseY);
+  return false;
 }
 
 function mouseWheel(event) {
@@ -161,15 +159,9 @@ function mouseWheel(event) {
 }
 
 function zoom() {
-  // zoom in center of canvas
-  translateZoomX = (width - width * scaleFactor) / 2; // center the canvas horizontally
-  translateZoomY = (height - height * scaleFactor) / 2; // center the canvas vertically
-
   // zoom in center of mouse position
   let X = (mouseX - translationX) * (1 - scaleFactor);
   let Y = (mouseY - translationY) * (1 - scaleFactor);
-
-  console.log(translateZoomX, translateZoomY, X, Y);
 
   translate(X, Y);
   scale(scaleFactor);
