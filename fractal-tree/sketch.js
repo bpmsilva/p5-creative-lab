@@ -16,6 +16,11 @@ const initialFractalAngle = Math.PI / 4;
 let scaleFactor = 1
 let translationX = 0;
 let translationY = 0;
+let zoomCount = 0;
+let oldMouseX = 0;
+let oldMouseY = 0;
+let oldTranslationX = 0;
+let oldTranslationY = 0;
 
 // variables for the size ratio sliders
 let ratioSlider1, ratioSlider2;
@@ -151,17 +156,30 @@ function mouseWheel(event) {
   if (event.deltaY > 0) {
     scaleFactor /= 1.1;
     strokeValue *= 1.1;
+    zoomCount++;
   } else {
     scaleFactor *= 1.1;
     strokeValue /= 1.1;
+    zoomCount--;
   }
+
+  oldMouseX = mouseX;
+  oldMouseY = mouseY;
+  oldTranslationX = translationX;
+  oldTranslationY = translationY;
+
+  console.log("oldMouseX: ", oldMouseX);
+  console.log("oldMouseY: ", oldMouseY);
+  console.log("oldTranslationX: ", oldTranslationX);
+  console.log("oldTranslationY: ", oldTranslationY);
+
   return false;
 }
 
 function zoom() {
   // zoom in center of mouse position
-  let X = (mouseX - translationX) * (1 - scaleFactor);
-  let Y = (mouseY - translationY) * (1 - scaleFactor);
+  let X = (mouseX - translationX) * (1 - scaleFactor) - (mouseX - oldMouseX) * (1 - scaleFactor);
+  let Y = (mouseY - translationY) * (1 - scaleFactor) - (mouseY - oldMouseY) * (1 - scaleFactor);
 
   translate(X, Y);
   scale(scaleFactor);
