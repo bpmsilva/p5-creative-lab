@@ -178,8 +178,8 @@ function mouseWheel(event) {
 
 function zoom() {
   // zoom in center of mouse position
-  let X = (mouseX - translationX) * (1 - scaleFactor) - (mouseX - oldMouseX) * (1 - scaleFactor);
-  let Y = (mouseY - translationY) * (1 - scaleFactor) - (mouseY - oldMouseY) * (1 - scaleFactor);
+  let X = (oldMouseX - translationX) * (1 - scaleFactor);
+  let Y = (oldMouseY - translationY) * (1 - scaleFactor);
 
   translate(X, Y);
   scale(scaleFactor);
