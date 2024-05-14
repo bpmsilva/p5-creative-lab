@@ -9,9 +9,9 @@ const y0 = canvasSize;
 const y1 = y0 - firstBranchLength;
 
 let strokeValue = 2;
-const maxEndBranches = 2048;
-const initialFractalRatio = 0.5;
-const initialFractalAngle = Math.PI / 4;
+const maxEndBranches = 4*2048;
+const initialFractalRatio = 0.67;
+const initialFractalAngle = Math.PI / 6;
 
 let scaleFactor = 1
 let translationX = 0;
