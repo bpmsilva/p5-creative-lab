@@ -17,10 +17,10 @@ let scaleFactor = 1
 let translationX = 0;
 let translationY = 0;
 let zoomCount = 0;
-let oldMouseX = 0;
-let oldMouseY = 0;
 let oldTranslationX = 0;
 let oldTranslationY = 0;
+let X = 0;
+let Y = 0;
 
 // variables for the size ratio sliders
 let ratioSlider1, ratioSlider2;
@@ -144,8 +144,8 @@ onmousedown = function () {
 function mouseDragged() {
   fill(255, 0, 0);
   ellipse(
-    (mouseX - translationX),
-    (mouseY - translationY),
+    mouseX,
+    mouseY,
     5,
     5
   );
@@ -153,42 +153,34 @@ function mouseDragged() {
 }
 
 function mouseWheel(event) {
+  let factor = 1
   if (event.deltaY > 0) {
+    factor = 0.9;
     scaleFactor /= 1.1;
     strokeValue *= 1.1;
-    zoomCount++;
   } else {
+    factor = 1.1;
     scaleFactor *= 1.1;
     strokeValue /= 1.1;
-    zoomCount--;
   }
 
-  oldMouseX = mouseX;
-  oldMouseY = mouseY;
-  oldTranslationX = translationX;
-  oldTranslationY = translationY;
-
-  console.log("oldMouseX: ", oldMouseX);
-  console.log("oldMouseY: ", oldMouseY);
-  console.log("oldTranslationX: ", oldTranslationX);
-  console.log("oldTranslationY: ", oldTranslationY);
+  X = mouseX - (mouseX * factor) + (X * factor);
+  Y = mouseY - (mouseY * factor) + (Y * factor);
 
   return false;
 }
 
 function zoom() {
   // zoom in center of mouse position
-  let X = (oldMouseX - translationX) * (1 - scaleFactor);
-  let Y = (oldMouseY - translationY) * (1 - scaleFactor);
-
   translate(X, Y);
   scale(scaleFactor);
 }
 
 function draw() {
   strokeWeight(strokeValue);
-
   // translate considering the scale factor
+  // Reset matrix to apply transformations from scratch
+  mouseDragged();
   zoom();
   translate(translationX, translationY);
 
@@ -197,8 +189,6 @@ function draw() {
 
   fractalAngle1 = angleSlider1.value();
   fractalAngle2 = angleSlider2.value();
-
-  mouseDragged();
 
   // draw first branch
   if (fractalRatio1 != oldFractalRatio1 ||
